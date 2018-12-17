@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Money;
+use Carbon\Carbon;
 
 class MoneyController extends Controller
 {
@@ -11,9 +13,19 @@ class MoneyController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $money = Money::all();
+        $result = Money::query();
+        if ($request->filled('search')) {
+            $search = Carbon::parse($request->search)->format('y-m-d h:i:s');
+            $money = $result->whereDate('waktu', $search);
+        }
+
+        // } else {
+        //     return 'Data empty!';
+        // }
+        
+        $money = Money::orderBy('waktu', 'DESC')->paginate(5);
         return $money;
     }
 
@@ -44,7 +56,7 @@ class MoneyController extends Controller
             'operator' => $detail,
             'waktu' => $time,
         ]);
-        return $money;
+        return 'Data successfully added : '.$money;
     }
 
     /**
@@ -53,9 +65,18 @@ class MoneyController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Request $request, $id)
     {
-        //
+        $money = Money::find($id);
+        // $money->request->operator = $request->operator == '+' ? 'pemasukkan' : 'pengeluaran'; (cara manipulasi agar data di postman operator nya tidak '+' bagaimana yah? wkoko khususnya di controller ini karena biasa manupulasi ngelogic di blade nya saya..)
+
+        if (!empty($money)){ 
+        // selain fungsi empty ada fungsi yang samaga tapi bedakata gtu 
+
+            return $money;
+        } else {
+            return 'Data empty!';
+        }
     }
 
     /**
@@ -82,13 +103,13 @@ class MoneyController extends Controller
         $detail = $request->operator == 'pemasukkan' ? '+' : '-';
         $time = $request->waktu ? Carbon::parse($request->waktu)->format('y-m-d h:i:s') : '';
         $jumlah = filter_var($request->jumlah, FILTER_SANITIZE_NUMBER_FLOAT); 
-        $money = Money::find($id)->update([
-            'jumlah' => $jumlah,
-            'keterangan' => $request->keterangan, 
-            'operator' => $detail,
-            'waktu' => $time,
-        ]);
-        return $money;
+        $data = Money::find($id);
+        $data->jumlah = $jumlah;
+        $data->keterangan = $request->keterangan;
+        $data->operator = $detail;
+        $data->waktu = $time;
+        $data->save();
+        return 'Data successfully updated : '.$data;
     }
 
     /**
@@ -100,11 +121,25 @@ class MoneyController extends Controller
     public function destroy($id)
     {
         $money = Money::find($id)->delete();
-        return $money;
+        return 'Data berhasil di hapus';
     }
 
-    public function delete(Request $request)
+    // public function delete(Request $request)
+    // {
+    //     //
+    // }
+
+    public function laporan()
     {
-        //
+        $money = Money::whereMonth('created_at', '=', '12')->get();
+        $total = 0;
+        foreach ($money as $key => $value) {
+            if ($value->operator == '+') {
+                $total += $value->jumlah;
+            } else {
+                $total -= $value->jumlah;
+            }
+        }
+        return 'Total jumlah pengeluaran dan pemasukkan bulan ini : '.$total;
     }
 }

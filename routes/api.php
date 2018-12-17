@@ -19,4 +19,6 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 
 Route::resource('money', 'MoneyController', ['names' => 'money']);
 
-Route::post('delete/money', 'MoneyController@delete')->name('delete');
+// Route::post('delete/money', 'MoneyController@delete')->name('delete');
+
+Route::get('laporan/money', 'MoneyController@laporan', ['names' => 'laporan']);
