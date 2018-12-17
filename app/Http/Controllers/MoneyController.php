@@ -47,6 +47,13 @@ class MoneyController extends Controller
      */
     public function store(Request $request)
     {
+        $this->validate($request, [
+            'jumlah' => 'required|numeric',
+            'operator' => 'required|string',
+            'keterangan' => 'min:3|max:150|nullable',
+            'waktu' => 'required',
+        ]);
+
         $detail = $request->operator == 'pemasukkan' ? '+' : '-';
         $time = $request->waktu ? Carbon::parse($request->waktu)->format('y-m-d h:i:s') : '';
         $jumlah = filter_var($request->jumlah, FILTER_SANITIZE_NUMBER_FLOAT); 
@@ -99,6 +106,13 @@ class MoneyController extends Controller
      */
     public function update(Request $request, $id)
     {
+        $this->validate($request, [
+            'jumlah' => 'numeric',
+            'operator' => 'string',
+            'keterangan' => 'min:3|max:150|nullable',
+            'waktu' => 'required',
+        ]);
+
         $detail = $request->operator == 'pemasukkan' ? '+' : '-';
         $time = $request->waktu ? Carbon::parse($request->waktu)->format('y-m-d h:i:s') : '';
         $jumlah = filter_var($request->jumlah, FILTER_SANITIZE_NUMBER_FLOAT); 
