@@ -24,7 +24,7 @@ class MoneyController extends Controller
         // } else {
         //     return 'Data empty!';
         // }
-        
+
         $money = Money::orderBy('waktu', 'DESC')->paginate(5);
         return $money;
     }
@@ -68,14 +68,13 @@ class MoneyController extends Controller
     public function show(Request $request, $id)
     {
         $money = Money::find($id);
+
         // $money->request->operator = $request->operator == '+' ? 'pemasukkan' : 'pengeluaran'; (cara manipulasi agar data di postman operator nya tidak '+' bagaimana yah? wkoko khususnya di controller ini karena biasa manupulasi ngelogic di blade nya saya..)
 
-        if (!empty($money)){ 
-        // selain fungsi empty ada fungsi yang samaga tapi bedakata gtu 
-
+        if (filled($money)){  
             return $money;
         } else {
-            return 'Data empty!';
+            return 'Data id empty!';
         }
     }
 
