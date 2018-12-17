@@ -84,11 +84,11 @@ class MoneyController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
-    {
-        $money = Money::find($id);
-        return $money;
-    }
+    // public function edit($id)
+    // {
+    //     $money = Money::find($id);
+    //     return $money;
+    // }
 
     /**
      * Update the specified resource in storage.
