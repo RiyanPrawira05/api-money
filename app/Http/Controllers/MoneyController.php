@@ -120,7 +120,7 @@ class MoneyController extends Controller
     public function destroy($id)
     {
         $money = Money::find($id)->delete();
-        return 'Data berhasil di hapus';
+        return 'Data successfully deleted';
     }
 
     // public function delete(Request $request)
