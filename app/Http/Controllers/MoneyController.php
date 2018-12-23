@@ -17,7 +17,7 @@ class MoneyController extends Controller
     {
         $result = Money::query();
         if ($request->filled('search')) {
-            $search = Carbon::parse($request->search)->format('y-m-d h:i:s');
+            $search = Carbon::parse($request->search)->format('y-m-d');
             $money = $result->whereDate('waktu', $search);
         }
 
@@ -137,10 +137,18 @@ class MoneyController extends Controller
         return 'Data successfully deleted';
     }
 
-    // public function delete(Request $request)
-    // {
-    //     //
-    // }
+    public function delete(Request $request)
+    {
+        if (filled($request->ceklis))
+        {
+            $ceklis = $request->ceklis;
+            $money = Money::whereIn('id', $ceklis)->delete();
+            return 'Data catatan finance sudah dihapus';
+
+        } else {
+            return 'Tidak ada data yang ingin dihapus, silahkan cek kembali';
+        }
+    }
 
     public function laporan()
     {
